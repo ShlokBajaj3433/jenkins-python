@@ -1,10 +1,19 @@
 pipeline {
     agent any
+
     stages {
-        stage('Run') {
+
+        stage('Docker Build') {
             steps {
-                sh 'python3 app.py'
+                sh 'docker build --no-cache -t my-app .'
             }
         }
+
+        stage('Run Container') {
+            steps {
+                sh 'docker run my-app'
+            }
+        }
+
     }
 }
