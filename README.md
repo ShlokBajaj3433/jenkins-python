@@ -81,15 +81,14 @@ docker volume create jenkins_home
 docker run -d --name jenkins `
   -p 8080:8080 -p 50000:50000 `
   -v jenkins_home:/var/jenkins_home `
-  -v //var/run/docker.sock:/var/run/docker.sock `
   -v c:/codes/Jenkins:/workspace `
   jenkins/jenkins:lts-jdk17
 ```
 
-### 2. Install Docker CLI inside Jenkins container
+### 2. Install Python inside Jenkins container
 
 ```powershell
-docker exec -u 0 jenkins sh -c "apt-get update && apt-get install -y docker.io"
+docker exec -u 0 jenkins sh -c "apt-get update && apt-get install -y python3"
 ```
 
 ### 3. Open Jenkins and unlock
@@ -107,8 +106,8 @@ Install suggested plugins and complete the first admin user setup.
 
 Current Jenkins pipeline has two stages:
 
-1. Docker Build
-2. Run Container
+1. Checkout
+2. Run Python App
 
 ### Create Jenkins job for this project
 
@@ -122,20 +121,16 @@ Current Jenkins pipeline has two stages:
 
 ### Notes
 
-- This setup uses Docker-outside-of-Docker via the mounted Docker socket.
-- If multiple jobs run in parallel, image name collisions can happen because the current image tag is `my-app`.
+- This setup does not require Docker socket access for Jenkins builds.
+- The pipeline directly runs the Python app to validate execution.
 
 ## Troubleshooting
 
 - `python: command not found`:
-  - Install Python and add it to PATH
-- Docker command errors:
-  - Install Docker and verify daemon is running
-- Jenkins cannot run Docker:
-  - Ensure Docker socket is mounted and Docker CLI is installed in the Jenkins container
+  - Install Python inside the Jenkins container
 
 ## Keep It Simple and Standard
 
 - Run with `python app.py`
 - Use Dockerfile for container runs
-- Use Jenkinsfile for automated build and run
+- Use Jenkinsfile to run Python directly in CI
