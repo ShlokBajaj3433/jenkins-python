@@ -1,9 +1,13 @@
-FROM python:3.10
+FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY . .
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN echo "Running Python setup"
+COPY . ./
+
+EXPOSE 5000
+ENV PORT=5000
 
 CMD ["python", "app.py"]
